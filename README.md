@@ -6,18 +6,27 @@
 docker build -t php-code-quality https://github.com/TanNhatCMS/php-code-quality.git
 ```
 ## Lệnh sử dụng
-### Rector
+### 🛠️ Rector – Tự động refactor code PHP theo rule
 ```shell
 docker run -it --rm -v "$PWD":/project -w /project php-code-quality /usr/local/lib/php-code-quality/vendor/bin/rector process --config /usr/local/lib/php-code-quality/rector.php
 ```
-### Rector dry-run
+🔹 Chạy Rector để tự động refactor code PHP (ví dụ nâng cấp cú pháp, chuẩn hóa kiểu Laravel, v.v.).
+🔹 Dùng cấu hình tùy chỉnh ở /usr/local/lib/php-code-quality/rector.php.
+
+###  Rector Dry-run – Kiểm tra refactor sẽ thay đổi gì mà không áp dụng
 ```shell
 docker run -it --rm -v "$PWD":/project -w /project php-code-quality /usr/local/lib/php-code-quality/vendor/bin/rector process --config /usr/local/lib/php-code-quality/rector.php --dry-run
 ```
-### PHPStan
+🔹 Giống như lệnh trên nhưng chỉ "xem trước" thay đổi mà không ghi đè file.
+🔹 Rất phù hợp để review trước khi commit.
+
+### 🧪 PHPStan – Phân tích tĩnh code, phát hiện lỗi tiềm ẩn
 ```shell
 docker run --rm -t -v "$PWD":/project -w /project php-code-quality php /usr/local/lib/php-code-quality/vendor/bin/phpstan analyse -l 0 --error-format=table
 ```
+🔹 Kiểm tra code bằng phân tích tĩnh ở mức độ nhẹ (level 0).
+🔹 Giúp phát hiện lỗi logic, gọi hàm sai, biến chưa định nghĩa mà không cần chạy app.
+🔹 Hiển thị kết quả dạng bảng trực quan.
 
 - Lưu ý Windows: Chạy trong Git Bash hoặc WSL (Windows Subsystem for Linux)
 
