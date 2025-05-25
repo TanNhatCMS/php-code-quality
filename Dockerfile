@@ -4,7 +4,7 @@ FROM php:8.2-cli
 
 ENV TARGET_DIR="/usr/local/lib/php-code-quality" \
     COMPOSER_ALLOW_SUPERUSER=1 \
-    TIMEZONE=America/New_York \
+    TIMEZONE=Asia/Ho_Chi_Minh \
     PHP_MEMORY_LIMIT=512M
 
 RUN mkdir -p $TARGET_DIR
