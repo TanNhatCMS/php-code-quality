@@ -9,37 +9,34 @@ use Rector\Set\ValueObject\LevelSetList;
 use RectorLaravel\Set\LaravelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    // Tự động load autoload của project Laravel
+    // Autoload project Laravel đã được mount vào /project
     $rectorConfig->autoloadPaths([
-        __DIR__ . '/vendor/autoload.php',
+        '/project/vendor/autoload.php',
     ]);
 
-    // Thư mục hoặc file muốn phân tích
+    // Các thư mục trong project Laravel
     $rectorConfig->paths([
-        __DIR__ . '/app',
-        __DIR__ . '/routes',
-        __DIR__ . '/database',
-        __DIR__ . '/tests',
+        '/project/app',
+        '/project/routes',
+        '/project/database',
+        '/project/tests',
     ]);
 
-    // Loại trừ vendor và các file không cần thiết
+    // Bỏ qua những thư mục không cần phân tích
     $rectorConfig->skip([
-        __DIR__ . '/storage',
-        __DIR__ . '/bootstrap/cache',
-        __DIR__ . '/vendor',
+        '/project/storage',
+        '/project/bootstrap/cache',
+        '/project/vendor',
     ]);
 
-    // PHP Version
+    // Cấu hình PHP version
     $rectorConfig->phpVersion(PhpVersion::PHP_82);
 
-    // Các bộ quy tắc áp dụng
+    // Bộ rule áp dụng
     $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_82,     // refactor để tương thích PHP 8.2
-        LaravelLevelSetList::UP_TO_LARAVEL_110,    // các cải tiến và chuyển đổi trong Laravel 10
+        LevelSetList::UP_TO_PHP_82,
+        LaravelLevelSetList::UP_TO_LARAVEL_110,
         LaravelSetList::LARAVEL_CODE_QUALITY,
         LaravelSetList::LARAVEL_COLLECTION,
-        //SetList::CODE_QUALITY,          // cải thiện chất lượng mã
-       // SetList::DEAD_CODE,             // xóa code không còn sử dụng
-        //SetList::TYPE_DECLARATION,      // thêm type declaration vào function/method
     ]);
 };
