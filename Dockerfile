@@ -1,6 +1,6 @@
 # Choose the desired PHP version
 # Choices available at https://hub.docker.com/_/php/ stick to "-cli" versions recommended
-FROM php:8.2-cli
+FROM php:8.4-cli
 
 ENV TARGET_DIR="/usr/local/lib/php-code-quality" \
     COMPOSER_ALLOW_SUPERUSER=1 \
