@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  php-code-quality:
+    build:
+      context: .          # Thư mục hiện tại, nơi đặt Dockerfile
+      dockerfile: Dockerfile
+    image: php-code-quality:latest
+    container_name: php-code-quality
+    volumes:
+      - ../:/usr/src/myapp              # Mount thư mục dự án hiện tại
+      - ./php_code_quality:/usr/src/myapp/php_code_quality  # Mount thư mục chứa kết quả
+      - ./cache:/root/.composer/cache  # Tăng tốc cài đặt composer
+    working_dir: /usr/src/myapp
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+    entrypoint: ["sh"]  # Mặc định mở shell, có thể thay đổi thành "php" hoặc script khác nếu muốn
