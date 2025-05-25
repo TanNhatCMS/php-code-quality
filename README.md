@@ -1,3 +1,31 @@
+### Cách sử dụng các công cụ phân tích tĩnh
+
+## Build Docker image
+
+```shell
+docker build -t php-code-quality https://github.com/TanNhatCMS/php-code-quality.git
+```
+## Lệnh sử dụng
+### Rector
+```shell
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality /usr/local/lib/php-code-quality/vendor/bin/rector process --config /usr/local/lib/php-code-quality/rector.php
+```
+### Rector dry-run
+```shell
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality /usr/local/lib/php-code-quality/vendor/bin/rector process --config /usr/local/lib/php-code-quality/rector.php --dry-run
+```
+### PHPStan
+```shell
+docker run --rm -t -v "$PWD":/project -w /project php-code-quality php /usr/local/lib/php-code-quality/vendor/bin/phpstan analyse -l 0 --error-format=table
+```
+
+- Lưu ý Windows: Chạy trong Git Bash hoặc WSL (Windows Subsystem for Linux)
+
+
+
+
+
+----
 # php-code-quality
 Mục tiêu của tôi là bao gồm nhiều công cụ chất lượng mã PHP trong hình ảnh Docker dễ sử dụng. Các công cụ bao gồm phân tích tĩnh PHP, các dòng báo cáo mã PHP, máy dò lộn xộn, làm nổi bật mùi mùi, phát hiện sao chép/dán và khả năng tương thích ứng dụng từ một phiên bản PHP này sang phiên bản khác cho các nỗ lực hiện đại hóa.
 Cụ thể hơn, hình ảnh Docker bao gồm:
@@ -21,17 +49,18 @@ Repository này dựa trên:
 
 Lưu ý: Hình ảnh này không làm gì khi gọi nó mà không có lệnh theo dõi (như được hiển thị bên dưới trong `Một số lệnh ví dụ` cho mỗi công cụ), chẳng hạn như:
 
-```
-cd </path/to/desired/directory>
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp \
-adamculp/php-code-quality:latest <followup-command-with-arguments>
+```shell
+cd </path/to/your/project>
+docker run -it --rm -v "$PWD":/project -w /project \
+php-code-quality <followup-command-with-arguments>
 ```
 
 Ngoài ra, lưu ý ví dụ trên là sử dụng kho lưu trữ Docker Hub. Ngoài ra, bạn cũng có thể sử dụng kho lưu trữ gói GitHub bằng cách chi tiêu `ghcr.io/` cho định danh hình ảnh, như sau: (thay thế các trình giữ chỗ trong khung góc bằng các giá trị của bạn.)
-```
+
+```shell
 cd </path/to/your/project>
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp \
- adamculp/php-code-quality:latest <followup-command-with-arguments>
+docker run -it --rm -v "$PWD":/project -w /project \
+ php-code-quality <followup-command-with-arguments>
 ```
 
 NGƯỜI DÙNG WINDOWS: Việc sử dụng "$PWD" cho thư mục làm việc hiện tại sẽ không hoạt động như mong đợi, thay vào đó hãy sử dụng "%cd%" hoặc đường dẫn đầy đủ. Ví dụ: "//c/Users/adamculp/project".
@@ -54,7 +83,8 @@ Các lệnh có sẵn do image adamculp/php-code-quality cung cấp:
 QUAN TRỌNG: Nếu sử dụng các lệnh bên dưới "nguyên trạng", vui lòng tạo một thư mục 'php_code_quality' trong dự án trước. Thư mục này sẽ được các lệnh sử dụng để chứa kết quả của các công cụ khác nhau. Sửa đổi nếu muốn.
 
 QUAN TRỌNG: Nếu bạn gặp sự cố về bộ nhớ, trong đó kết quả đầu ra cho biết tiến trình đã hết bộ nhớ, bạn có thể thay đổi lượng bộ nhớ mà tiến trình PHP sử dụng cho một lệnh nhất định bằng cách thêm cờ -d vào lệnh PHP. Lưu ý rằng ví dụ sau dành cho các trường hợp cực đoan vì image đã đặt giới hạn bộ nhớ là 512M. (không khuyến khích)
-```
+
+```shell
 php -d memory_limit=1G
 ```
 
@@ -63,8 +93,8 @@ php -d memory_limit=1G
 Xem [Tài liệu PHPStan](https://phpstan.org/user-guide/getting-started) để biết thêm tài liệu về cách sử dụng.
 
 ```
-docker run -it --rm --name php-code-quality -v "$PWD":/usr/src/myapp -w /usr/src/myapp \
-adamculp/php-code-quality:latest sh -c 'php /usr/local/lib/php-code-quality/vendor/bin/phpstan \
+docker run -it --rm --name php-code-quality -v "$PWD":/project -w /project \
+php-code-quality sh -c 'php /usr/local/lib/php-code-quality/vendor/bin/phpstan \
  analyse -l 0 --error-format=table > ./php_code_quality/phpstan_results.txt .'
 ```
 
@@ -72,8 +102,8 @@ adamculp/php-code-quality:latest sh -c 'php /usr/local/lib/php-code-quality/vend
 
 Xem [PHP_CodeSniffer Wiki](https://github.com/squizlabs/PHP_CodeSniffer/wiki) để biết thêm chi tiết sử dụng công cụ này. (Lưu ý: Lệnh sau hướng dẫn PHP_CodeSniffer sử dụng tiêu chuẩn PSR-12, thay vì tiêu chuẩn PEAR mặc định. Cũng lưu ý dấu . ở cuối.)
 
-```
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp adamculp/php-code-quality:latest \
+```shell
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality \
 php /usr/local/lib/php-code-quality/vendor/bin/phpcs -sv --standard=PSR12 \
  --extensions=php --ignore=vendor --report-file=./php_code_quality/codesniffer_results.txt .
 ```
@@ -84,8 +114,8 @@ Xem [PHPCompatibility Readme](https://github.com/PHPCompatibility/PHPCompatibili
 
 Lưu ý: Lệnh sau khác với các lệnh khác, vì nó truyền 2 lệnh PHP thay vì một lệnh duy nhất. Điều này cho phép tải các sniff của PHPCompatibility trước khi sử dụng.
 
-```
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp adamculp/php-code-quality:latest sh -c \
+```shell
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality sh -c \
 'php /usr/local/lib/php-code-quality/vendor/bin/phpcs -sv --config-set installed_paths  /usr/local/lib/php-code-quality/vendor/phpcompatibility/php-compatibility && \
 php /usr/local/lib/php-code-quality/vendor/bin/phpcs -sv --standard='PHPCompatibility' --extensions=php --ignore=vendor \
 --report-file=./php_code_quality/phpcompatibility_results.txt .'
@@ -96,7 +126,7 @@ php /usr/local/lib/php-code-quality/vendor/bin/phpcs -sv --standard='PHPCompatib
 Xem [PHPLOC Readme](https://github.com/sebastianbergmann/phploc) để biết thêm chi tiết sử dụng công cụ này.
 
 ```
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp adamculp/php-code-quality:latest \
+docker run -it --rm -v "$PWD":/project -w /project adamculp/php-code-quality:latest \
 php /usr/local/lib/php-code-quality/vendor/bin/phploc  \
 --exclude vendor . > ./php_code_quality/phploc.txt
 ```
@@ -108,7 +138,7 @@ QUAN TRỌNG: Hiện đang gặp lỗi khi sử dụng công cụ này. Xem [v�
 Xem [PHPMD Readme](https://github.com/phpmd/phpmd) để biết thêm chi tiết sử dụng công cụ này.
 
 ```
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp adamculp/php-code-quality:latest \
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality \
 php /usr/local/lib/php-code-quality/vendor/bin/phpmd . xml codesize --exclude 'vendor' \
 --reportfile './php_code_quality/phpmd_results.xml'
 ```
@@ -122,7 +152,7 @@ Xem [Tài liệu PDepend](https://pdepend.org/) để biết thêm chi tiết s�
 Lưu ý: Tôi đã không sử dụng công cụ này một thời gian và nhận thấy nó có thể yêu cầu đăng ký Tidelift để sử dụng.
 
 ```
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp adamculp/php-code-quality:latest \
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality \
 php /usr/local/lib/php-code-quality/vendor/bin/pdepend --ignore='vendor' \
 --summary-xml='./php_code_quality/pdepend_output.xml' \
 --jdepend-chart='./php_code_quality/pdepend_chart.svg' \
@@ -133,8 +163,8 @@ php /usr/local/lib/php-code-quality/vendor/bin/pdepend --ignore='vendor' \
 
 Xem [PHPCPD Readme](https://github.com/sebastianbergmann/phpcpd) để biết thêm chi tiết sử dụng công cụ này.
 
-```
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp adamculp/php-code-quality:latest \
+```shell
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality \
 php /usr/local/lib/php-code-quality/vendor/bin/phpcpd . \
 --exclude 'vendor' > ./php_code_quality/phpcpd_results.txt
 ```
@@ -143,8 +173,8 @@ php /usr/local/lib/php-code-quality/vendor/bin/phpcpd . \
 
 Xem http://www.phpmetrics.org/ để biết thêm chi tiết sử dụng công cụ này.
 
-```
-docker run -it --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp adamculp/php-code-quality:latest \
+```shell
+docker run -it --rm -v "$PWD":/project -w /project php-code-quality:latest \
 php /usr/local/lib/php-code-quality/vendor/bin/phpmetrics --excluded-dirs 'vendor' \
 --report-html=./php_code_quality/metrics_results .
 ```
@@ -159,7 +189,7 @@ Tại sao? Ví dụ, bạn có thể muốn một phiên bản PHP khác. Hoặc
 Sau khi clone, điều hướng đến vị trí:
 
 ```shell
-$ git clone git@github.com:TanNhatCMS/php-code-quality.git
+$ git clone https://github.com/TanNhatCMS/php-code-quality.git
 $ cd php-code-quality
 $ docker build -t php-code-quality .
 ```
@@ -173,7 +203,7 @@ $ docker build -t php-code-quality .
 Hoặc người dùng có thể chỉ muốn image nguyên trạng và lưu vào bộ đệm để sử dụng sau:
 
 ```shell
-$ docker build -t adamculp/php-code-quality https://github.com/TanNhatCMS/php-code-quality.git
+$ docker build -t php-code-quality https://github.com/TanNhatCMS/php-code-quality.git
 ```
 
 ## Cách sử dụng các công cụ phân tích tĩnh
